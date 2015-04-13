@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-6666270658662393/1141828666" />
+        </LinearLayout>
+ <!--   <Button
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/button"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Facebook"
+        android:id="@+id/btnFacebook"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Google"
+        android:id="@+id/btnGoogle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Twitter"
+        android:id="@+id/btnTwitter"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LinkdIn"
+        android:id="@+id/btnLinkdIn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />-->
+
+
+    <RelativeLayout
+        android:id="@+id/root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:padding="16dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Tap to Share your thought's and images on your scoial newtworks  "
+            android:textSize="20sp"
+            android:textColor="#0496E1"/>
+
+
+
+    <FrameLayout
+        android:id="@+id/menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        >
+
+        <com.ogaclejapan.arclayout.ArcLayout
+            android:id="@+id/arc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="32dp"
+            app:arc_origin="bottom"
+            app:arc_radius="@dimen/layout_radius_path"
+            app:arc_axisRadius="@dimen/layout_child_offset_path"
+            app:arc_freeAngle="true"
+            >
+
+            <Button
+                style="@style/Item.Path"
+                android:id="@+id/fb"
+                android:background="@drawable/fb"
+                android:textColor="@color/path_orange"
+                app:arc_angle="30"
+                />
+
+            <Button
+                android:id="@+id/gog"
+                style="@style/Item.Path"
+                android:background="@drawable/go"
+                android:textColor="@color/path_blue"
+                app:arc_angle="60"
+                />
+
+            <Button
+                android:id="@+id/twt"
+                style="@style/Item.Path"
+                android:background="@drawable/tw"
+                android:textColor="@color/path_black"
+                app:arc_angle="90"
+                />
+
+            <Button
+                android:id="@+id/inst"
+                style="@style/Item.Path"
+                android:background="@drawable/li"
+                android:textColor="@color/path_green"
+                app:arc_angle="120"
+                />
+
+            <Button
+                android:id="@+id/lin"
+                style="@style/Item.Path"
+                android:background="@drawable/in"
+                android:textColor="@color/path_purple"
+                app:arc_angle="150"
+                />
+
+        </com.ogaclejapan.arclayout.ArcLayout>
+
+    </FrameLayout>
+    <Button
+        android:id="@+id/fab"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+
+        android:textSize="24sp"
+
+        android:background="@drawable/shakelogo"
+        />
+
+
+
+</RelativeLayout>
+</LinearLayout>
