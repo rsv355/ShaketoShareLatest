@@ -158,13 +158,6 @@ public class ShareActivity extends Activity implements View.OnClickListener,
 
 
 
-
-
-
-       /* Intent photoPicker = new Intent(Intent.ACTION_PICK);
-        photoPicker.setType("video*//*, image*//*");
-        startActivityForResult(photoPicker, PICK_MEDIA_REQUEST_CODE);*/
-
     }
 
 

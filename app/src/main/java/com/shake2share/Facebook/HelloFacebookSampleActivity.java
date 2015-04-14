@@ -17,11 +17,14 @@
 package com.shake2share.Facebook;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -52,8 +55,10 @@ import com.facebook.widget.LoginButton;
 import com.facebook.widget.PickerFragment;
 import com.facebook.widget.PlacePickerFragment;
 import com.facebook.widget.ProfilePictureView;
+import com.google.android.gms.plus.PlusShare;
 import com.shake2share.R;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +74,9 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     };
 
     private final String PENDING_ACTION_BUNDLE_KEY = "com.shake2share:PendingAction";
-
+    private static  int REQUEST;
+    private static final int PICK_MEDIA_REQUEST_CODE=3;
+    private static final int SHARE_MEDIA_REQUEST_CODE = 9;
     private Button postStatusUpdateButton;
     private Button postPhotoButton;
     private Button pickFriendsButton;
@@ -84,6 +91,7 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     private List<GraphUser> tags;
     private boolean canPresentShareDialog;
     private boolean canPresentShareDialogWithPhotos;
+    final CharSequence[] items = { "Take Photo", "Choose from Gallery" };
 
     private enum PendingAction {
         NONE,
@@ -152,21 +160,6 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
                 onClickPostPhoto();
             }
         });
-
-       /* pickFriendsButton = (Button) findViewById(R.id.pickFriendsButton);
-        pickFriendsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                onClickPickFriends();
-            }
-        });
-*/
-      /*  pickPlaceButton = (Button) findViewById(R.id.pickPlaceButton);
-        pickPlaceButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                onClickPickPlace();
-            }
-        });
-*/
         controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
 
         final FragmentManager fm = getSupportFragmentManager();
@@ -224,8 +217,90 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+   super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+
+
+
+
+if(REQUEST == 1 || REQUEST == 2 ) {
+
+ Bitmap bmp = (Bitmap) data.getExtras().get("data");
+    postPhoto(bmp);
+
+   /* Uri selectedImage = data.getData();
+
+    try {
+        Bitmap bitmap = decodeUri(selectedImage);
+        postPhoto(bitmap);
+
+    } catch (FileNotFoundException e) {
+        Toast.makeText(HelloFacebookSampleActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
+    }
+*/
+
+
+    /*switch (requestCode) {
+        case PICK_MEDIA_REQUEST_CODE:
+
+            if (REQUEST == 1) {
+
+
+                Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                postPhoto(bmp);
+
+            } else if (REQUEST == 2) {
+
+                Uri selectedImage = data.getData();
+
+                try {
+                    Bitmap bitmap = decodeUri(selectedImage);
+                    //  updateImageStatus(bitmap);
+                } catch (FileNotFoundException e) {
+                    Toast.makeText(HelloFacebookSampleActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
+                }
+
+
+            } else {
+                Toast.makeText(HelloFacebookSampleActivity.this, "Problem Occur", Toast.LENGTH_LONG).show();
+            }
+
+            break;
+
+    }
+*/
+
+}
+      /*  else {
+    uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+}
+*/
+
+    }
+
+
+    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(
+                getContentResolver().openInputStream(selectedImage), null, o);
+
+        final int REQUIRED_SIZE = 100;
+
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
     }
 
     @Override
@@ -260,6 +335,35 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         updateUI();
     }
 
+
+    private void processShareMedia() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(HelloFacebookSampleActivity.this);
+        builder.setTitle("Upload Image");
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    REQUEST = 1;
+                    startActivityForResult(takePicture, PICK_MEDIA_REQUEST_CODE);
+                    Log.e("Camera ","exit");
+
+                } else if (items[item].equals("Choose from Gallery")) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    REQUEST =2;
+                    startActivityForResult(pickPhoto , PICK_MEDIA_REQUEST_CODE);
+                }
+            }
+        });
+        builder.show();
+
+
+    }
+
     private void updateUI() {
         Session session = Session.getActiveSession();
         boolean enableButtons = (session != null && session.isOpened());
@@ -287,7 +391,9 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
 
         switch (previouslyPendingAction) {
             case POST_PHOTO:
-                postPhoto();
+             //  postPhoto();
+               processShareMedia();
+
                 break;
             case POST_STATUS_UPDATE:
                 postStatusUpdate();
@@ -325,7 +431,7 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     private FacebookDialog.ShareDialogBuilder createShareDialogBuilderForLink() {
         return new FacebookDialog.ShareDialogBuilder(this)
                 .setName("Shake 2 Share")
-                .setDescription("The 'Hello Facebook' sample application showcases simple Facebook integration")
+                .setDescription("Shake 2 Share App to share text and images.")
                 .setLink("http://developers.facebook.com/android");
     }
 
@@ -359,9 +465,18 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
                 .addPhotos(Arrays.asList(photos));
     }
 
-    private void postPhoto() {
 
-        Bitmap image = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
+
+
+
+
+
+
+
+    private void postPhoto(Bitmap bmp) {
+
+        Bitmap image= bmp;
+
 
         if (canPresentShareDialogWithPhotos) {
             FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();

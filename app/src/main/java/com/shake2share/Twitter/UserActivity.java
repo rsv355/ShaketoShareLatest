@@ -200,6 +200,9 @@ public class UserActivity extends BaseActivity {
                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
                    updateImageStatus(bmp);
 
+
+
+
                } else if (REQUEST == 2) {
 
                    Uri selectedImage = data.getData();
@@ -211,18 +214,6 @@ public class UserActivity extends BaseActivity {
                        Toast.makeText(UserActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
                    }
 
-
-
-
-
-
-
-               /*   try {
-                      Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                      updateImageStatus(bitmap);
-                  }catch (Exception e){
-                      Toast.makeText(UserActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
-                  }*/
 
 
                } else {

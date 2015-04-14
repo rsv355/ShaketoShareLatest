@@ -38,7 +38,7 @@
     <string name="revoke_access_button_name">Revoke access</string>
     <string name="server_auth_code_required_label">Reset server auth code state</string>
     <string name="share_title">Prefill Text (optional)</string>
-    <string name="share_prefill_text">Welcome to the Google+ platform.</string>
+    <string name="share_prefill_text">Share Text on Google+</string>
 
     <string name="default_status"/>
     <string name="greeting_status">Welcome, %s.</string>
