@@ -93,6 +93,7 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     private boolean canPresentShareDialog;
     private boolean canPresentShareDialogWithPhotos;
     final CharSequence[] items = { "Take Photo", "Choose from Gallery" };
+     Bitmap bmp2;
 
     private enum PendingAction {
         NONE,
@@ -158,7 +159,9 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         postPhotoButton = (Button) findViewById(R.id.postPhotoButton);
         postPhotoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                onClickPostPhoto();
+
+                processShareMedia();
+                //onClickPostPhoto();
             }
         });
         controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
@@ -220,25 +223,21 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
 
 
-        Log.e("data -->",""+data.getExtras().get("data"));
-      new AsyncTask<Void,Void,Void>(){
+        if(REQUEST == 1 || REQUEST == 2 ) {
 
-          @Override
-          protected Void doInBackground(Void... params) {
-              return null;
-          }
 
-          @Override
-          protected void onPostExecute(Void aVoid) {
-              super.onPostExecute(aVoid);
+                    bmp2 = (Bitmap) data.getExtras().get("data");
+                    Log.e("data -->2", "" + data.getExtras().get("data"));
+                   // postPhoto(bmp2);
 
-             Log.e("data -->2",""+data.getExtras().get("data"));
-          }
-      }.execute();
+                    onClickPostPhoto();
 
+
+        }else{
+            uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+        }
 
 /*
 
@@ -416,8 +415,8 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
         switch (previouslyPendingAction) {
             case POST_PHOTO:
-             //  postPhoto();
-               processShareMedia();
+                  postPhoto(bmp2);
+              // processShareMedia();
 
                 break;
             case POST_STATUS_UPDATE:
