@@ -215,6 +215,7 @@ public class ShareActivity extends Activity implements View.OnClickListener,
                     share.setText("Shake to Share");
                     share.addStream(selectedImage);
                     share.setType(mime);
+
                     startActivityForResult(share.getIntent(),
                             SHARE_MEDIA_REQUEST_CODE);
 

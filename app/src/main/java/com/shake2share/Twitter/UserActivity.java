@@ -1,11 +1,17 @@
 package com.shake2share.Twitter;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +19,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.plus.PlusShare;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -23,6 +31,7 @@ import com.shake2share.R;
 
 
 import net.londatiga.android.twitter.Twitter;
+import net.londatiga.android.twitter.TwitterDialog;
 import net.londatiga.android.twitter.TwitterRequest;
 import net.londatiga.android.twitter.util.Debug;
 
@@ -31,6 +40,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -38,8 +48,13 @@ import java.util.List;
 
 public class UserActivity extends BaseActivity {
 	private Twitter mTwitter;
-	
-	@Override
+    private static final int PICK_MEDIA_REQUEST_CODE=3;
+    private static final int SHARE_MEDIA_REQUEST_CODE = 9;
+    final CharSequence[] items = { "Take Photo", "Choose from Gallery" };
+
+
+    private static  int REQUEST;
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -85,7 +100,7 @@ public class UserActivity extends BaseActivity {
             @Override
             public void onClick(View arg0) {
 
-               updateImageStatus();
+                processShareMedia();
              //   updateStatus("kukur");
             }
         });
@@ -117,7 +132,113 @@ public class UserActivity extends BaseActivity {
 		imageLoader.displayImage(getProfilePicture(), userIv, animate);
 	}
 
-    private void updateImageStatus() {
+    private void processShareMedia() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
+        builder.setTitle("Upload Image");
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    REQUEST = 1;
+                    startActivityForResult(takePicture, PICK_MEDIA_REQUEST_CODE);
+                    Log.e("Camera ","exit");
+
+                } else if (items[item].equals("Choose from Gallery")) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    REQUEST =2;
+                    startActivityForResult(pickPhoto , PICK_MEDIA_REQUEST_CODE);
+                }
+            }
+        });
+        builder.show();
+
+
+    }
+
+
+
+    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(
+                getContentResolver().openInputStream(selectedImage), null, o);
+
+        final int REQUIRED_SIZE = 100;
+
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+       switch(requestCode) {
+           case PICK_MEDIA_REQUEST_CODE:
+
+
+               if (REQUEST == 1) {
+
+
+                   Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                   updateImageStatus(bmp);
+
+               } else if (REQUEST == 2) {
+
+                   Uri selectedImage = data.getData();
+
+                   try {
+                       Bitmap bitmap = decodeUri(selectedImage);
+                       updateImageStatus(bitmap);
+                   } catch (FileNotFoundException e) {
+                       Toast.makeText(UserActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
+                   }
+
+
+
+
+
+
+
+               /*   try {
+                      Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                      updateImageStatus(bitmap);
+                  }catch (Exception e){
+                      Toast.makeText(UserActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
+                  }*/
+
+
+               } else {
+                   Toast.makeText(UserActivity.this, "Problem Occur", Toast.LENGTH_LONG).show();
+               }
+
+               break;
+
+       }
+    }
+
+
+
+
+
+    private void updateImageStatus(Bitmap image) {
         final ProgressDialog progressDlg = new ProgressDialog(this);
 
         progressDlg.setMessage("Sending...");
@@ -132,11 +253,17 @@ public class UserActivity extends BaseActivity {
         List<NameValuePair> params 	= new ArrayList<NameValuePair>(1);
 
         Resources r = this.getResources();
-        Bitmap bm = BitmapFactory.decodeResource(r, R.drawable.ic_launcher);
+
+        //Bitmap bm = BitmapFactory.decodeResource(r, R.drawable.ic_launcher);
+        Bitmap bm = image;
+
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
+
         String  encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+
 
 
         params.add(new BasicNameValuePair("media",encodedImage));
