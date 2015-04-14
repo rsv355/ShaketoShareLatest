@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -215,12 +216,31 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         outState.putString(PENDING_ACTION_BUNDLE_KEY, pendingAction.name());
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-   super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
 
 
+        Log.e("data -->",""+data.getExtras().get("data"));
+      new AsyncTask<Void,Void,Void>(){
+
+          @Override
+          protected Void doInBackground(Void... params) {
+              return null;
+          }
+
+          @Override
+          protected void onPostExecute(Void aVoid) {
+              super.onPostExecute(aVoid);
+
+             Log.e("data -->2",""+data.getExtras().get("data"));
+          }
+      }.execute();
+
+
+/*
 
 
 if(REQUEST == 1 || REQUEST == 2 ) {
@@ -228,7 +248,8 @@ if(REQUEST == 1 || REQUEST == 2 ) {
  Bitmap bmp = (Bitmap) data.getExtras().get("data");
     postPhoto(bmp);
 
-   /* Uri selectedImage = data.getData();
+   */
+/* Uri selectedImage = data.getData();
 
     try {
         Bitmap bitmap = decodeUri(selectedImage);
@@ -237,10 +258,12 @@ if(REQUEST == 1 || REQUEST == 2 ) {
     } catch (FileNotFoundException e) {
         Toast.makeText(HelloFacebookSampleActivity.this, "Image not Found", Toast.LENGTH_LONG).show();
     }
-*/
+*//*
 
 
-    /*switch (requestCode) {
+
+    */
+/*switch (requestCode) {
         case PICK_MEDIA_REQUEST_CODE:
 
             if (REQUEST == 1) {
@@ -268,13 +291,15 @@ if(REQUEST == 1 || REQUEST == 2 ) {
             break;
 
     }
-*/
+*//*
+
 
 }
-      /*  else {
+        else {
     uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
 }
 */
+
 
     }
 
