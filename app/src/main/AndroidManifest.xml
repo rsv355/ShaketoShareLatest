@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.developershake2share" >
+    package="com.shake2share" >
 
     <!--
     pls write this is manifest tag
@@ -36,13 +36,13 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <receiver android:name="com.developershake2share.BootCompleteReceiver" >
+        <receiver android:name="com.shake2share.BootCompleteReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.developershake2share.Facebook.HelloFacebookBroadcastReceiver" >
+        <receiver android:name="com.shake2share.Facebook.HelloFacebookBroadcastReceiver" >
             <intent-filter>
                 <action android:name="com.facebook.platform.AppCallResultBroadcast" />
             </intent-filter>
@@ -56,33 +56,33 @@
 
 
         <activity
-            android:name="com.developershake2share.Twitter.MainActivity"
+            android:name="com.shake2share.Twitter.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <activity
-            android:name="com.developershake2share.Twitter.UserActivity"
+            android:name="com.shake2share.Twitter.UserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <activity
-            android:name="com.developershake2share.Facebook.HelloFacebookSampleActivity"
+            android:name="com.shake2share.Facebook.HelloFacebookSampleActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <activity
-            android:name="com.developershake2share.Facebook.FacebookHomeActivity"
+            android:name="com.shake2share.Facebook.FacebookHomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.developershake2share.MainActivity"
+            android:name="com.shake2share.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -94,17 +94,17 @@
         </activity>
 
         <service
-            android:name="com.developershake2share.MyService"
+            android:name="com.shake2share.MyService"
             android:enabled="true" />
 
 
         <activity
-            android:name="com.developershake2share.Google.SignInActivity"
+            android:name="com.shake2share.Google.SignInActivity"
             android:exported="false">
 
         </activity>
         <activity
-            android:name="com.developershake2share.Google.ShareActivity"
+            android:name="com.shake2share.Google.ShareActivity"
             android:exported="false">
 
         </activity>

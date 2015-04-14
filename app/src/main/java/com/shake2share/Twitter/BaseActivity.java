@@ -1,4 +1,4 @@
-package com.developershake2share.Twitter;
+package com.shake2share.Twitter;
 
 import android.app.Activity;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.developershake2share;
+package com.shake2share;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,8 +20,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.ogaclejapan.arclayout.ArcLayout;
-import com.developershake2share.Facebook.HelloFacebookSampleActivity;
-import com.developershake2share.Google.ShareActivity;
+import com.shake2share.Facebook.HelloFacebookSampleActivity;
+import com.shake2share.Google.ShareActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 startActivity(i2);
                 break;
             case R.id.twt:
-                Intent i3 =  new Intent(MainActivity.this, com.developershake2share.Twitter.MainActivity.class);
+                Intent i3 =  new Intent(MainActivity.this, com.shake2share.Twitter.MainActivity.class);
                 startActivity(i3);
                 break;
             case R.id.inst:

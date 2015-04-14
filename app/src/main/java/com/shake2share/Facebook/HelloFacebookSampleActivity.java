@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.developershake2share.Facebook;
+package com.shake2share.Facebook;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -52,7 +52,7 @@ import com.facebook.widget.LoginButton;
 import com.facebook.widget.PickerFragment;
 import com.facebook.widget.PlacePickerFragment;
 import com.facebook.widget.ProfilePictureView;
-import com.developershake2share.R;
+import com.shake2share.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

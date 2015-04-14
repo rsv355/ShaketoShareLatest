@@ -1,4 +1,4 @@
-package com.developershake2share;
+package com.shake2share;
 
 import android.content.Context;
 import android.hardware.Sensor;

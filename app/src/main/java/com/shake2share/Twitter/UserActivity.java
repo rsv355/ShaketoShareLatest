@@ -1,4 +1,4 @@
-package com.developershake2share.Twitter;
+package com.shake2share.Twitter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.developershake2share.R;
+import com.shake2share.R;
 
 
 import net.londatiga.android.twitter.Twitter;

@@ -1,4 +1,4 @@
-package com.developershake2share.Facebook;
+package com.shake2share.Facebook;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
-import com.developershake2share.R;
+import com.shake2share.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

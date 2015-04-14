@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.developershake2share"
+        applicationId "com.shake2share"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

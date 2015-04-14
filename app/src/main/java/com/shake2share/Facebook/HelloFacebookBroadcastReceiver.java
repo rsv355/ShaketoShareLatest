@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.developershake2share.Facebook;
+package com.shake2share.Facebook;
 
 import android.os.Bundle;
 import android.util.Log;

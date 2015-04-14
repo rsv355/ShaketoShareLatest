@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.developershake2share.Google;
+package com.shake2share.Google;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,7 +37,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.PlusShare;
-import com.developershake2share.R;
+import com.shake2share.R;
 
 import java.io.ByteArrayOutputStream;
 

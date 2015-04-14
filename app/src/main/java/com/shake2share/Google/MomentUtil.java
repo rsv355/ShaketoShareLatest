@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.developershake2share.Google;
+package com.shake2share.Google;
 
 import com.google.android.gms.plus.model.moments.ItemScope;
 
