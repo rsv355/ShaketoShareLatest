@@ -16,7 +16,7 @@ public class MainActivity extends BaseActivity {
 	
 	public static final String CONSUMER_KEY = "Rj34RfNT12NJy7AQFOcWwm88q";
 	public static final String CONSUMER_SECRET = "HsXLB1WHejihqRdYZCHyaGJ3XFNtyrXMnLqA0zUjh3Ox2YjxOc";
-	public static final String CALLBACK_URL = "";
+	public static final String CALLBACK_URL = "http://www.shake2share.com";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
