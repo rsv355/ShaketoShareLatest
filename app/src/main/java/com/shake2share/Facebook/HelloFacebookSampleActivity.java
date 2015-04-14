@@ -47,6 +47,11 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.DialogError;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphPlace;
 import com.facebook.model.GraphUser;
@@ -59,7 +64,13 @@ import com.facebook.widget.ProfilePictureView;
 import com.google.android.gms.plus.PlusShare;
 import com.shake2share.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -224,15 +235,16 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+      // uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
 
         if(REQUEST == 1 || REQUEST == 2 ) {
 
 
                     bmp2 = (Bitmap) data.getExtras().get("data");
-                    Log.e("data -->2", "" + data.getExtras().get("data"));
+                    Log.e("data -->", "" + data.getExtras().get("data"));
                    // postPhoto(bmp2);
 
-                    onClickPostPhoto();
+                   onClickPostPhoto();
 
 
         }else{
@@ -302,6 +314,77 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
     }
 
+
+    private  void m(){
+        Facebook mFacebook=new Facebook("420905678076145");
+
+        byte[] data = null;
+        //Bitmap bi = BitmapFactory.decodeFile(bmp2);
+        Bitmap bi = bmp2;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bi.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        data = baos.toByteArray();
+
+        Bundle params = new Bundle();
+        params.putString("method", "photos.upload");
+        params.putByteArray("picture", data);
+
+        AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+        mAsyncRunner.request(null, params, "POST",
+                new SampleUploadListener(), null);
+    }
+
+
+    public class SampleUploadListener extends BaseRequestListener {
+
+        @SuppressWarnings("unused")
+        public void onComplete(final String response, final Object state) {
+            try {
+                Log.d("Facebook-Example", "Response: " + response.toString());
+                JSONObject json = Util.parseJson(response);
+                String src = json.getString("src");
+
+                PublishImage.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Successfully Uploaded", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+            } catch (JSONException e) {
+                Log.w("Facebook-Example", "JSON Error in response");
+            } catch (FacebookError e) {
+                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+            }
+        }
+    }
+
+
+    public abstract class BaseRequestListener implements AsyncFacebookRunner.RequestListener {
+
+        public void onFacebookError(FacebookError e, final Object state) {
+            Log.e("Facebook", e.getMessage());
+            e.printStackTrace();
+        }
+
+        public void onFileNotFoundException(FileNotFoundException e,
+                                            final Object state) {
+            Log.e("Facebook", e.getMessage());
+            e.printStackTrace();
+        }
+
+        public void onIOException(IOException e, final Object state) {
+            Log.e("Facebook", e.getMessage());
+            e.printStackTrace();
+        }
+
+        public void onMalformedURLException(MalformedURLException e,
+                                            final Object state) {
+            Log.e("Facebook", e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
 
     private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -499,10 +582,17 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
     private void postPhoto(Bitmap bmp) {
 
-        Bitmap image= bmp;
+        Bitmap image= bmp2;
+
+        if(bmp2 ==null){
+            Log.e("data -->","nothing");
+            return;
+        }else{
 
 
-        if (canPresentShareDialogWithPhotos) {
+           Toast.makeText(HelloFacebookSampleActivity.this,""+bmp2.toString(),Toast.LENGTH_LONG).show();
+
+           if (canPresentShareDialogWithPhotos) {
             FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
         } else if (hasPublishPermission()) {
@@ -516,6 +606,22 @@ if(REQUEST == 1 || REQUEST == 2 ) {
         } else {
             pendingAction = PendingAction.POST_PHOTO;
         }
+        }
+
+        /*if (canPresentShareDialogWithPhotos) {
+            FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
+            uiHelper.trackPendingDialogCall(shareDialog.present());
+        } else if (hasPublishPermission()) {
+            Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), image, new Request.Callback() {
+                @Override
+                public void onCompleted(Response response) {
+                    showPublishResult(getString(R.string.photo_post), response.getGraphObject(), response.getError());
+                }
+            });
+            request.executeAsync();
+        } else {
+            pendingAction = PendingAction.POST_PHOTO;
+        }*/
     }
 
     private void showPickerFragment(PickerFragment<?> fragment) {
@@ -639,6 +745,7 @@ if(REQUEST == 1 || REQUEST == 2 ) {
     }
 
     private void performPublish(PendingAction action, boolean allowNoSession) {
+
         Session session = Session.getActiveSession();
         if (session != null) {
             pendingAction = action;
