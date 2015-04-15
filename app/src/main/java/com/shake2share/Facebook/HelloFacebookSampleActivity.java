@@ -21,6 +21,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -105,7 +107,7 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     private boolean canPresentShareDialogWithPhotos;
     final CharSequence[] items = { "Take Photo", "Choose from Gallery" };
      Bitmap bmp2;
-
+    Facebook mFacebook=new Facebook("420905678076145");
     private enum PendingAction {
         NONE,
         POST_PHOTO,
@@ -171,8 +173,8 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
         postPhotoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
 
-                processShareMedia();
-                //onClickPostPhoto();
+              //  processShareMedia();
+                onClickPostPhoto();
             }
         });
         controlsContainer = (ViewGroup) findViewById(R.id.main_ui_container);
@@ -235,7 +237,9 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-      // uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+        uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+    }
+/*
 
         if(REQUEST == 1 || REQUEST == 2 ) {
 
@@ -243,13 +247,14 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
                     bmp2 = (Bitmap) data.getExtras().get("data");
                     Log.e("data -->", "" + data.getExtras().get("data"));
                    // postPhoto(bmp2);
-
-                   onClickPostPhoto();
+          //  m(bmp2);
+                  // onClickPostPhoto();
 
 
         }else{
             uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
         }
+*/
 
 /*
 
@@ -312,15 +317,43 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 */
 
 
-    }
 
 
-    private  void m(){
-        Facebook mFacebook=new Facebook("420905678076145");
 
-        byte[] data = null;
+    private  void m2(){
+
+
+
+
+        mFacebook.authorize(this, new String[] { "user_photos,publish_checkins,publish_actions,publish_stream" },
+                new Facebook.DialogListener() {
+
+                    @Override
+                    public void onFacebookError(FacebookError e) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onError(DialogError dialogError) {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void onComplete(Bundle values) {
+                     //   postToWall(values.getString(Facebook.TOKEN));
+                        postToWall();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // TODO Auto-generated method stub
+                    }
+                });
+
+
+    /*    byte[] data = null;
         //Bitmap bi = BitmapFactory.decodeFile(bmp2);
-        Bitmap bi = bmp2;
+        Bitmap bi = b;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bi.compress(Bitmap.CompressFormat.PNG, 100, baos);
         data = baos.toByteArray();
@@ -331,12 +364,40 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
         AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(mFacebook);
         mAsyncRunner.request(null, params, "POST",
-                new SampleUploadListener(), null);
+                new SampleUploadListener(), null);*/
     }
 
 
-    public class SampleUploadListener extends BaseRequestListener {
+    private void postToWall() {
 
+
+
+        Drawable bmp = getResources().getDrawable(R.drawable.shakelogo);
+
+
+        Bitmap bitmap = ((BitmapDrawable)bmp).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bitmapdata = stream.toByteArray();
+
+
+
+        Bundle params = new Bundle();
+
+        params.putString(Facebook.TOKEN, mFacebook.getAccessToken());
+        params.putString("method", "photos.upload");
+
+
+        // The byte array is the data of a picture.
+        params.putByteArray("picture", bitmapdata);
+
+        AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+        mAsyncRunner.request(null, params, "POST", new SampleUploadListener(), null);
+
+    }
+
+    public class SampleUploadListener extends BaseRequestListener {
+     //   Facebook mFacebook=new Facebook("420905678076145");
         @SuppressWarnings("unused")
         public void onComplete(final String response, final Object state) {
             try {
@@ -344,7 +405,8 @@ if(REQUEST == 1 || REQUEST == 2 ) {
                 JSONObject json = Util.parseJson(response);
                 String src = json.getString("src");
 
-                PublishImage.this.runOnUiThread(new Runnable() {
+                Log.e("resssss",src);
+                HelloFacebookSampleActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
                         Toast.makeText(getApplicationContext(),
                                 "Successfully Uploaded", Toast.LENGTH_SHORT)
@@ -352,9 +414,9 @@ if(REQUEST == 1 || REQUEST == 2 ) {
                     }
                 });
             } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
+                Log.e("Facebook-Example", "JSON Error in response");
             } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+                Log.e("Facebook-Example", "Facebook Error: " + e.getMessage());
             }
         }
     }
@@ -498,9 +560,7 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
         switch (previouslyPendingAction) {
             case POST_PHOTO:
-                  postPhoto(bmp2);
-              // processShareMedia();
-
+                postPhoto();
                 break;
             case POST_STATUS_UPDATE:
                 postStatusUpdate();
@@ -543,6 +603,7 @@ if(REQUEST == 1 || REQUEST == 2 ) {
     }
 
     private void postStatusUpdate() {
+
         if (canPresentShareDialog) {
             FacebookDialog shareDialog = createShareDialogBuilderForLink().build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
@@ -575,22 +636,62 @@ if(REQUEST == 1 || REQUEST == 2 ) {
 
 
 
+    private void postPhoto() {
+
+
+        Bitmap image = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
+
+        if (canPresentShareDialogWithPhotos) {
+            FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
+            uiHelper.trackPendingDialogCall(shareDialog.present());
+        } else if (hasPublishPermission()) {
+            Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), image, new Request.Callback() {
+                @Override
+                public void onCompleted(Response response) {
+                    showPublishResult(getString(R.string.photo_post), response.getGraphObject(), response.getError());
+                }
+            });
+            request.executeAsync();
+        } else {
+            pendingAction = PendingAction.POST_PHOTO;
+        }
 
 
 
 
 
-    private void postPhoto(Bitmap bmp) {
+     /*
+        Bitmap image = BitmapFactory.decodeResource(this.getResources(), R.drawable.icon);
+        SharePhoto sharePhoto = new SharePhoto.Builder().setBitmap(image).build();
+        ArrayList<SharePhoto> photos = new ArrayList<>();
+        photos.add(sharePhoto);
 
-        Bitmap image= bmp2;
+        SharePhotoContent sharePhotoContent =   new SharePhotoContent.Builder().setPhotos(photos).build();
+        if (canPresentShareDialogWithPhotos) {
+            shareDialog.show(sharePhotoContent);
+        } else if (hasPublishPermission()) {
+            ShareApi.share(sharePhotoContent, shareCallback);
+        } else {
+            pendingAction = PendingAction.POST_PHOTO;
+        }*/
+    }
 
-        if(bmp2 ==null){
-            Log.e("data -->","nothing");
-            return;
-        }else{
 
 
-           Toast.makeText(HelloFacebookSampleActivity.this,""+bmp2.toString(),Toast.LENGTH_LONG).show();
+
+   /* private void postPhoto() {
+
+
+               Drawable bmp11 = getResources().getDrawable(R.drawable.shakelogo);
+
+
+            Bitmap bitmap = ((BitmapDrawable)bmp11).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] bitmapdata = stream.toByteArray();
+
+
+            Bitmap image= bitmap;
 
            if (canPresentShareDialogWithPhotos) {
             FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
@@ -606,9 +707,9 @@ if(REQUEST == 1 || REQUEST == 2 ) {
         } else {
             pendingAction = PendingAction.POST_PHOTO;
         }
-        }
 
-        /*if (canPresentShareDialogWithPhotos) {
+
+        *//*if (canPresentShareDialogWithPhotos) {
             FacebookDialog shareDialog = createShareDialogBuilderForPhoto(image).build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
         } else if (hasPublishPermission()) {
@@ -621,8 +722,8 @@ if(REQUEST == 1 || REQUEST == 2 ) {
             request.executeAsync();
         } else {
             pendingAction = PendingAction.POST_PHOTO;
-        }*/
-    }
+        }*//*
+    }*/
 
     private void showPickerFragment(PickerFragment<?> fragment) {
         fragment.setOnErrorListener(new PickerFragment.OnErrorListener() {
@@ -745,7 +846,6 @@ if(REQUEST == 1 || REQUEST == 2 ) {
     }
 
     private void performPublish(PendingAction action, boolean allowNoSession) {
-
         Session session = Session.getActiveSession();
         if (session != null) {
             pendingAction = action;
